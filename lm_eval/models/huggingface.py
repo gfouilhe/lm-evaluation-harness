@@ -97,6 +97,7 @@ class HFLM(TemplateLM):
         batch_size: Optional[Union[int, str]] = 1,
         max_batch_size: Optional[int] = 64,
         trust_remote_code: Optional[bool] = False,
+        local_files_only: Optional[bool] = False,
         use_fast_tokenizer: Optional[bool] = True,
         add_bos_token: Optional[bool] = False,
         prefix_token_id: Optional[int] = None,
@@ -139,6 +140,7 @@ class HFLM(TemplateLM):
                     revision=revision,
                     trust_remote_code=trust_remote_code,
                     use_fast=use_fast_tokenizer,
+                    local_files_only=local_files_only,
                 )
 
         else:
@@ -191,6 +193,7 @@ class HFLM(TemplateLM):
                 pretrained,
                 revision=revision,
                 trust_remote_code=trust_remote_code,
+                local_files_only=local_files_only,
             )
 
         # determine which of 'causal' and 'seq2seq' backends to use
@@ -205,6 +208,7 @@ class HFLM(TemplateLM):
                 revision=revision,
                 dtype=dtype,
                 trust_remote_code=trust_remote_code,
+                local_files_only=local_files_only,
                 parallelize=parallelize,
                 device_map_option=device_map_option,
                 max_memory_per_gpu=max_memory_per_gpu,
@@ -239,6 +243,7 @@ class HFLM(TemplateLM):
             tokenizer,
             revision=revision,
             trust_remote_code=trust_remote_code,
+            local_files_only=local_files_only,
             use_fast_tokenizer=use_fast_tokenizer,
         )
 
@@ -467,17 +472,20 @@ class HFLM(TemplateLM):
         pretrained: str,
         revision: str = "main",
         trust_remote_code: bool = False,
+        local_files_only = False,
     ) -> None:
         self._config = transformers.AutoConfig.from_pretrained(
             pretrained,
             revision=revision,
             trust_remote_code=trust_remote_code,
+            local_files_only=local_files_only,
         )
 
     def _create_model(
         self,
         pretrained: str,
         revision: Optional[str] = "main",
+        local_files_only: Optional[bool] = False,
         dtype: Optional[Union[str, torch.dtype]] = "auto",
         trust_remote_code: Optional[bool] = False,
         # arguments used for splitting a model across GPUs naively.
@@ -545,6 +553,7 @@ class HFLM(TemplateLM):
                 revision=revision,
                 torch_dtype=get_dtype(dtype),
                 trust_remote_code=trust_remote_code,
+                local_files_only=local_files_only,
                 **model_kwargs,
             )
         else:
@@ -614,6 +623,7 @@ class HFLM(TemplateLM):
                 transformers.PreTrainedTokenizerFast,
             ]
         ],
+        local_files_only: Optional[bool] = False,
         revision: Optional[str] = "main",
         trust_remote_code: Optional[bool] = False,
         use_fast_tokenizer: Optional[bool] = True,
@@ -631,6 +641,7 @@ class HFLM(TemplateLM):
                     tokenizer,
                     revision=revision,
                     trust_remote_code=trust_remote_code,
+                    local_files_only=local_files_only,
                     use_fast=use_fast_tokenizer,
                 )
             else:
@@ -649,6 +660,7 @@ class HFLM(TemplateLM):
                 model_name,
                 revision=revision,
                 trust_remote_code=trust_remote_code,
+                local_files_only=local_files_only,
                 use_fast=use_fast_tokenizer,
             )
         return None

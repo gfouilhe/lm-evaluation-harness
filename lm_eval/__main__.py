@@ -229,6 +229,12 @@ def setup_parser() -> argparse.ArgumentParser:
         help="Sets trust_remote_code to True to execute code to create HF Datasets from the Hub",
     )
 
+    parser.add_argument(
+        "--local_files_only",
+        action="store_true",
+        help="Sets local_files_only to True in the from_pretrained methods of HF for offline usage",
+    )
+
     return parser
 
 
@@ -332,6 +338,11 @@ def cli_evaluate(args: Union[argparse.Namespace, None] = None) -> None:
             + f",trust_remote_code={os.environ['HF_DATASETS_TRUST_REMOTE_CODE']}"
         )
 
+    if args.local_files_only:
+        args.model_args = (
+            args.model_args
+            + f",local_files_only=f{str(args.local_files_only)}"
+        )
     eval_logger.info(f"Selected Tasks: {task_names}")
 
     request_caching_args = request_caching_arg_to_dict(
